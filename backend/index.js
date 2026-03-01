@@ -9,8 +9,25 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// 中间件
-app.use(cors());
+// CORS 配置 - 允许前端域名
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'https://frontend-wheat-phi-63.vercel.app',
+  process.env.FRONTEND_URL
+].filter(Boolean);
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // 允许没有 origin 的请求（如 Postman、服务器间请求）
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      return callback(null, true);
+    }
+    return callback(null, true); // 暂时允许所有源，上线稳定后可改为拒绝
+  },
+  credentials: true
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
