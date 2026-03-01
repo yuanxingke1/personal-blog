@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { getArticles } from '../lib/api';
+import { formatDate } from '../lib/localization';
 
 const BlogList = () => {
   const [articles, setArticles] = useState([]);
@@ -8,11 +10,7 @@ const BlogList = () => {
   useEffect(() => {
     const fetchArticles = async () => {
       try {
-        const response = await fetch('http://localhost:3001/api/articles');
-        if (!response.ok) {
-          throw new Error('Failed to fetch articles');
-        }
-        const data = await response.json();
+        const data = await getArticles();
         setArticles(data);
       } catch (err) {
         setError(err.message);
@@ -84,7 +82,7 @@ const BlogList = () => {
                   {article.category?.name || '未分类'}
                 </span>
                 <span className="text-gray-500 dark:text-gray-400 text-sm">
-                  {new Date(article.createdAt).toLocaleDateString('zh-CN')}
+                  {formatDate(article.createdAt)}
                 </span>
               </div>
               <h2 className="text-xl font-bold mb-2 text-gray-800 dark:text-white">
